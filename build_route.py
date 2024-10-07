@@ -13,9 +13,6 @@ class Customer:
 
 
 class Route:
-    max_load = 20 # change this numer
-    max_time = 30 # change this numer
-
     def __init__(self,index, depot_location, a1, a2, max_load, max_time):
         self.customers = [depot_location]  # Khởi tạo với kho
         self.depot_location = depot_location
