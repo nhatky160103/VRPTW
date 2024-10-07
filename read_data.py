@@ -9,20 +9,12 @@ def get_data(test_case):
     customer_path = os.path.join('input_dir', test_case, 'customer_data.txt')
     matrix_path = os.path.join('input_dir', test_case, 'cost_matrix.txt')
 
-
-    data_infos = []
     with open(data_path, mode ="r") as datainfo_file:
         data_infos = datainfo_file.readlines()
-
-
     m, Q, D, e0, l0 = [int(float(c)) for c in data_infos[0].split()]
 
-
-    customers_info = []
     with open(customer_path, mode="r") as customerinfo_file:
         customers_info = customerinfo_file.readlines()
-
-
 
     customers = []
     for i in range(len(customers_info)):
@@ -30,9 +22,6 @@ def get_data(test_case):
         idxi, qi,  si, ei, li = [int(float(c)) for c in customers_info[i].split()]
         customers.append(Customer_Tu(qi, si, (ei, li)))
 
-
-
-    cost_data = []
     with open(matrix_path, "r") as cost_file:
         cost_data = cost_file.readlines()
 
@@ -43,8 +32,8 @@ def get_data(test_case):
 
     return m, Q, D, e0, l0, cost_matrix, customers
 
-if __name__ =="__main__":
 
+if __name__ =="__main__":
     test_case = input('Input the testcase: ... ')
 
     m, Q, D, e0, l0, cost_matrix, customers = get_data(test_case)

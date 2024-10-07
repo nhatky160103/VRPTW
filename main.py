@@ -1,5 +1,5 @@
 from gen_pop_greedy_new import nearest_neighbor, Customer_Tu
-from read_data import  get_data
+from read_data import get_data
 from build_route import Customer, Route, build_routes, distance_between
 
 def create_data_model(customers, routes, a1, a2):
@@ -53,18 +53,18 @@ if __name__ == "__main__":
     print(m, Q, D, e0, l0,  cost_matrix, customers)
     routes, cost = nearest_neighbor(customers, m, Q, D, e0, l0, cost_matrix)
 
-    # if routes != -1:
-    final_routes = []
-    for route in routes:
-        temp_route = []
-        for customer in route:
-            temp_route.append(customer+1)
-        final_routes.append(temp_route)
+    if routes != -1:
+        final_routes = []
+        for route in routes:
+            temp_route = []
+            for customer in route:
+                temp_route.append(customer+1)
+            final_routes.append(temp_route)
 
-    print("_______________________________")
-    print("final_route sequence algorithm:\n")
-    print(final_routes)
-    print(cost)
+        print("_______________________________")
+        print("final_route sequence algorithm:\n")
+        print(final_routes)
+        print(cost)
 
     # seed_route, my_customers = create_data_model(customers, final_routes, 0.5, 0.5)
     #
