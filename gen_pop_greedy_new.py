@@ -53,7 +53,10 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
                 current_time += timecost_matrix[last_customer_index + 1][0]
 
                 while current_time > l0 or current_time > D + e0:
-                    current_time = current_time - timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1] - timecost_matrix[route.customers[-1] + 1][route.customers[-2] + 1]
+                    if len(route.customers) > 1:
+                        current_time = current_time - timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1] - timecost_matrix[route.customers[-1] + 1][route.customers[-2] + 1]
+                    else:
+                        current_time = current_time - timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1] - timecost_matrix[route.customers[-1] + 1][0]
                     
                     print(f"Remove customer {route.customers[-1]}")
                     unrouted_customers.add(route.customers[-1])
