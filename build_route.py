@@ -13,19 +13,17 @@ class Customer:
 
 
 class Route:
-    def __init__(self,index, depot_location, a1, a2, max_load, max_time):
+    def __init__(self,index, depot_location, max_load, max_time):
         self.customers = [depot_location]  # Khởi tạo với kho
         self.depot_location = depot_location
-        self.index= index
+        self.index = index
         self.load = 0
         self.time = 0
-        self.a1 = a1
-        self.a2 = a2
-        self.max_load= max_load
-        self.max_time= max_time
+        self.max_load = max_load
+        self.max_time = max_time
 
     def insert_customer(self, new_customer, index, cost_matrix):
-        new_customer.is_routed= True
+        new_customer.is_routed = True
         self.customers.insert(index, new_customer)
 
         for i in range(index, len(self.customers)):
@@ -149,7 +147,7 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
 
         for customer in remaining_customer:# duyệt qua từng khách hàng
           for route in routes: # thực hiện tính vị trí chèn đối với từng route
-            cost, index = insertion_cost(route, customer , a1, a2, cost_matrix)
+            cost, index = insertion_cost(route, customer, a1, a2, cost_matrix)
 
             if customer not in index_matrix:
               index_matrix[customer] = []
