@@ -53,7 +53,7 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
                 current_time += timecost_matrix[last_customer_index + 1][0]
 
                 while current_time > l0 or current_time > D + e0:
-                    current_time -= timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1]
+                    current_time = current_time - timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1] - timecost_matrix[route.customers[-1] + 1][route.customers[-2] + 1]
                     
                     print(f"Remove customer {route.customers[-1]}")
                     unrouted_customers.add(route.customers[-1])
@@ -126,69 +126,3 @@ def is_feasible(route, customer_index, current_time, customers, Q, D, e0, l0, ti
         return False
     
     return True
-
-
-##### READ INPUT #####
-
-# data_infos = []
-# with open("data_infor.txt", mode = "r") as datainfo_file:
-#     data_infos = datainfo_file.readlines()
-# m, Q, D, e0, l0 = [int(float(c)) for c in data_infos[1].split(",")]
-
-
-# customers_info = []
-# with open("customer_data.txt", mode="r") as customerinfo_file:
-#     customers_info = customerinfo_file.readlines()
-
-# n = len(customers_info) - 1
-# customers = []
-# for i in range(1, n+1):
-#     qi, ei, li, si = [int(float(c)) for c in customers_info[i].split(",")[3:]]
-#     customers.append(Customer(qi, si, (ei, li)))
-
-
-# cost_data = []
-# with open("cost_matrix.txt", "r") as cost_file:
-#     cost_data = cost_file.readlines()
-
-# timecost_matrix = []
-# for row in cost_data[1:]:
-#     row = [float(c) for c in row.split(",")[1:]]
-#     timecost_matrix.append(row)
-
-# routes, COST = nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix)
-
-# print()
-# print()
-# print(routes)
-# print(COST)
-# print()
-
-
-# lines = []
-# with open("input.txt", "r") as input_file:
-#     lines = input_file.readlines()
-#
-# n, m, Q, D, T, e0, l0 = [int(c) for c in lines[0].split()]
-#
-# i = 1
-# customers = []
-# for _ in range(n):
-#     qi, si, ei, li = [int(c) for c in lines[i].split()]
-#     customers.append(Customer_Tu(qi, si, (ei, li)))
-#     i += 1
-#
-# # Read the distance matrix
-# timecost_matrix = []
-# for _ in range(n + 1):
-#     row = [float(c) for c in lines[i].split()]
-#     timecost_matrix.append(row)
-#     i += 1
-#
-# routes, COST = nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix)
-#
-# print()
-# print()
-# print(routes)
-# print(COST)
-# print()
