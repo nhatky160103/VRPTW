@@ -55,7 +55,6 @@ if __name__ == "__main__":
     final_routes = []
     if mode == 1:
         routes, cost = nearest_neighbor(customers, m, Q, D, e0, l0, cost_matrix)
-
         if routes != -1:
             final_routes = []
             for route in routes:
@@ -65,7 +64,7 @@ if __name__ == "__main__":
                 final_routes.append(temp_route)
 
             print("____"*20)
-            print("final_route sequence algorithm:\n")
+            print("final_route greedy algorithm:\n")
             print(final_routes)
             print(cost)
             print("____"*20)

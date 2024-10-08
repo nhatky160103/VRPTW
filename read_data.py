@@ -5,7 +5,7 @@ alpha = beta = 0.5
 
 def get_data(test_case):
 
-    data_path = os.path.join('input_dir', test_case, 'data_infor.txt')
+    data_path = os.path.join('input_dir', test_case, 'data_info.txt')
     customer_path = os.path.join('input_dir', test_case, 'customer_data.txt')
     matrix_path = os.path.join('input_dir', test_case, 'cost_matrix.txt')
 
