@@ -37,8 +37,9 @@ if __name__ =="__main__":
     test_case = input('Input the testcase: ... ')
 
     m, Q, D, e0, l0, cost_matrix, customers = get_data(test_case)
-    print(cost_matrix)
-    for customer in customers:
-        print(customer.demand, customer.service_time, customer.time_window)
-    print(m, Q, D, e0, l0)
+    print(cost_matrix[16][0])
+
+    # for customer in customers:
+    #     print(customer.demand, customer.service_time, customer.time_window)
+    # print(m, Q, D, e0, l0)
 

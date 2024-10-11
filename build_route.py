@@ -1,6 +1,5 @@
 import numpy as np
-
-
+INF = 10000
 class Customer:
     def __init__(self, index, q=None, s=None,  e=None, l=None):
         self.index = index
@@ -40,7 +39,7 @@ def distance_between(c1, c2, cost_matrix):
 
 def calc_b(prev_customer, customer, cost_matrix):# tính thời gian hoàn thành việc phục vụ cho một khách hàng với điều kiện đã biết được thời gian phục vụ của khách hàng trước đó
     if prev_customer is None or customer is None:
-        return float('inf')
+        return INF
     return max(customer.e, prev_customer.finish_serve_time + distance_between(prev_customer, customer, cost_matrix)) + customer.s
 
 
@@ -63,19 +62,20 @@ def calc_c1(prev_customer, new_customer, next_customer, cost_matrix, a1,  a2):
 
 
 def insertion_cost(route, new_customer, a1, a2, cost_matrix):
-    min_cost = float('inf')
+    min_cost = INF
     best_position = -1
 
     for i in range(1, len(route.customers)): # bắt đầu chèn từ vị trí sau vị trí 0 (không thể chèn trước depot được)
-        if i == len(route.customers):  # Chèn ở cuối lộ trình
-            cost = calc_c1(route.customers[-1], new_customer, route.customers[0], cost_matrix, a1,  a2)
+        if check_feasible(route, new_customer, i, cost_matrix):
+            if i == len(route.customers):  # Chèn ở cuối lộ trình
+                cost = calc_c1(route.customers[-1], new_customer, route.customers[0], cost_matrix, a1,  a2)
 
-        else:  # Chèn giữa các khách hàng
-            cost = calc_c1(route.customers[i - 1], new_customer, route.customers[i], cost_matrix, a1, a2)
+            else:  # Chèn giữa các khách hàng
+                cost = calc_c1(route.customers[i - 1], new_customer, route.customers[i], cost_matrix, a1, a2)
 
-        if cost < min_cost:
-            min_cost = cost
-            best_position = i
+            if cost < min_cost:
+                min_cost = cost
+                best_position = i
 
     return min_cost, best_position # đây là vị trí điểm j tức là cần chèn khách vào trước điểm này là phương án tốt nhất
 
@@ -84,17 +84,20 @@ def insertion_cost(route, new_customer, a1, a2, cost_matrix):
 def calc_c2(list_index, customer, routes, cost_matrix, a1, a2):
 
     total_cost = 0
-    optim_cost = float('inf')
+    optim_cost = INF
 
     for i, route in enumerate(routes): # duyệt qua từng route thực hiện tính c1 đối với mỗi route
-        prev_customer = route.customers[list_index[i]-1]
-        next_customer = route.customers[list_index[i]]
-        cost =  calc_c1(prev_customer,  customer, next_customer, cost_matrix, a1, a2)
+        if list_index[i] != -1:
+            prev_customer = route.customers[list_index[i]-1]
+            next_customer = route.customers[list_index[i]]
+            cost = calc_c1(prev_customer,  customer, next_customer, cost_matrix, a1, a2)
+        else:
+            cost = INF
         total_cost += cost
         if cost < optim_cost:
-          optim_cost= cost
+          optim_cost = cost
 
-    return total_cost - 2*optim_cost # là tổng cost của các route không tối ưu trừ cost của route tối ưu
+    return total_cost - len(routes)*optim_cost  # là tổng cost của các route không tối ưu trừ cost của route tối ưu
 
 
 
@@ -102,22 +105,16 @@ import copy
 
 def check_feasible(route, new_customer, position, cost_matrix):
 
-
     temp_route = copy.deepcopy(route)
     temp_route.insert_customer(new_customer, position, cost_matrix)
 
-    print('check !................')
-
     if route.load + new_customer.q > route.max_load or temp_route.time > route.max_time :
-
         return False
 
     for i in range(position, len(temp_route.customers)):
-        # print(f"arive time {temp_route.customers[i].index} :  ", temp_route.customers[i-1].finish_serve_time +
-        #       distance_between(temp_route.customers[i-1], temp_route.customers[i], cost_matrix) )
-        # print(f'due time {temp_route.customers[i].index} :', temp_route.customers[i].l)
-
-        if temp_route.customers[i-1].finish_serve_time + distance_between(temp_route.customers[i-1], temp_route.customers[i], cost_matrix) >  temp_route.customers[i].l:
+        arrive_time = temp_route.customers[i-1].finish_serve_time + distance_between(temp_route.customers[i-1], temp_route.customers[i], cost_matrix)
+        due_time = temp_route.customers[i].l
+        if arrive_time > due_time:
              # nếu thời gian đến mà sau duetime thì không thỏa mãn
              return False
 
@@ -148,17 +145,17 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
         for customer in remaining_customer:# duyệt qua từng khách hàng
           for route in routes: # thực hiện tính vị trí chèn đối với từng route
             cost, index = insertion_cost(route, customer, a1, a2, cost_matrix)
-
             if customer not in index_matrix:
               index_matrix[customer] = []
             index_matrix[customer].append(index)
 
         # thực hiện tìm ra u* khách hàng tối ưu nhất
-        optimal_c2 = float('-inf')
+        optimal_c2 = -INF
         optimal_customer = None
 
         for customer in remaining_customer:
           c2_cost = calc_c2(index_matrix[customer], customer, routes, cost_matrix, a1, a2)
+          print(f'C2 cost: {c2_cost}')
 
           if c2_cost > optimal_c2:
             optimal_c2 = c2_cost
@@ -167,10 +164,10 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
         print('optimal_customer:', optimal_customer.index)
 
         # thực hiện tìm ra route tốt nhất đối với u*
-        optim_cost = float('inf')
+        optim_cost = INF
 
         optim_position = None
-        optim_route_index = None
+        optim_route_index = -1
 
 
         for i, route in enumerate(routes):
@@ -181,12 +178,12 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
             optim_route_index = i
 
         print('optim_position', optim_position, 'optim_route_index', optim_route_index)
-
-        if check_feasible(routes[optim_route_index], optimal_customer, optim_position, cost_matrix):
-
+        if optim_position == None or optim_route_index ==None or optim_route_index == -1:
+            print('NIL')
+            return None
+        elif check_feasible(routes[optim_route_index], optimal_customer, optim_position, cost_matrix) :
           optimal_customer.is_routed = True
           routes[optim_route_index].insert_customer(optimal_customer, optim_position, cost_matrix )
-
           remaining_customer.remove(optimal_customer)
 
         else:
