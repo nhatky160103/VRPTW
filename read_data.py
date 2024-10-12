@@ -5,9 +5,9 @@ alpha = beta = 0.5
 
 def get_data(test_case):
 
-    data_path = os.path.join('input_dir', test_case, 'data_info.txt')
-    customer_path = os.path.join('input_dir', test_case, 'customer_data.txt')
-    matrix_path = os.path.join('input_dir', test_case, 'cost_matrix.txt')
+    data_path = os.path.join('Solomon_25', test_case, 'data_info.txt')
+    customer_path = os.path.join('Solomon_25', test_case, 'customer_data.txt')
+    matrix_path = os.path.join('Solomon_25', test_case, 'cost_matrix.txt')
 
     with open(data_path, mode ="r") as datainfo_file:
         data_infos = datainfo_file.readlines()
@@ -31,6 +31,7 @@ def get_data(test_case):
         cost_matrix.append(row)
 
     return m, Q, D, e0, l0, cost_matrix, customers
+
 
 
 if __name__ =="__main__":
