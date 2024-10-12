@@ -1,5 +1,7 @@
 import numpy as np
 INF = 10000
+
+
 class Customer:
     def __init__(self, index, q=None, s=None,  e=None, l=None):
         self.index = index
@@ -32,7 +34,6 @@ class Route:
         self.load += new_customer.q
 
 
-
 def distance_between(c1, c2, cost_matrix):
     return cost_matrix[c1.index][c2.index]
 
@@ -41,7 +42,6 @@ def calc_b(prev_customer, customer, cost_matrix):# tính thời gian hoàn thàn
     if prev_customer is None or customer is None:
         return INF
     return max(customer.e, prev_customer.finish_serve_time + distance_between(prev_customer, customer, cost_matrix)) + customer.s
-
 
 
 def calc_c1(prev_customer, new_customer, next_customer, cost_matrix, a1,  a2):
@@ -55,10 +55,9 @@ def calc_c1(prev_customer, new_customer, next_customer, cost_matrix, a1,  a2):
 
     buj = max(next_customer.e, bu + distance_between(new_customer, next_customer, cost_matrix)) + next_customer.s # thời gian hoàn thành của next_customer sau khi đã thêm u vào
 
-    delay =  buj - bj # thể hiện độ trễ khi thêm u vào
+    delay = buj - bj # thể hiện độ trễ khi thêm u vào
 
-    return a1* detour + a2 * delay
-
+    return a1 * detour + a2 * delay
 
 
 def insertion_cost(route, new_customer, a1, a2, cost_matrix):
@@ -155,13 +154,9 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
 
         for customer in remaining_customer:
           c2_cost = calc_c2(index_matrix[customer], customer, routes, cost_matrix, a1, a2)
-          print(f'C2 cost: {c2_cost}')
-
           if c2_cost > optimal_c2:
             optimal_c2 = c2_cost
             optimal_customer = customer
-
-        print('optimal_customer:', optimal_customer.index)
 
         # thực hiện tìm ra route tốt nhất đối với u*
         optim_cost = INF
@@ -177,7 +172,6 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
             optim_position = index
             optim_route_index = i
 
-        print('optim_position', optim_position, 'optim_route_index', optim_route_index)
         if optim_position == None or optim_route_index ==None or optim_route_index == -1:
             print('NIL')
             return None

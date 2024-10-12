@@ -1,11 +1,12 @@
 from gen_pop_greedy_new import nearest_neighbor, Customer_Tu
 from read_data import get_data
 from build_route import Customer, Route, build_routes, distance_between
-INF= 10000
+INF = 10000
+
+
 def create_data_model(customers, routes):
     # đây chính là danh sách các khách hàng và route được lấy từ thuật toán sequence
     """
-
     :param routes: đây chính là list các route mà mỗi route là một list các khách hàng
     :return:
         seed_route: khởi tạo ban đầu của các route mỗi route chỉ bao gồm depot và khách haàng xa depot nhất của mỗi route
@@ -21,7 +22,6 @@ def create_data_model(customers, routes):
         temp_customer = Customer(i+1, customer.demand, customer.service_time, customer.time_window[0], customer.time_window[1])
         my_customers.append(temp_customer)
 
-
     seed_route= []
     for i, route in enumerate(routes):
         temp_route = Route(i, depot, Q, D) # khởi tạo một route chỉ gồm depot
@@ -34,8 +34,8 @@ def create_data_model(customers, routes):
             if cost > optim_cost:
                 optim_cost = cost
                 optim_customer = my_customers[index_customer]
-        temp_route.insert_customer(optim_customer, 1, cost_matrix)# thêm khách hàng xa nhất vào route đó
-        seed_route.append(temp_route) # thêm route vào seed_route
+        temp_route.insert_customer(optim_customer, 1, cost_matrix)  # thêm khách hàng xa nhất vào route đó
+        seed_route.append(temp_route)  # thêm route vào seed_route
 
     return seed_route, my_customers
 
@@ -49,8 +49,8 @@ def print_routes(routes, cost_matrix, customers):
             result += f'{customers[customer-1].time_window}'
             result += f'[{customer}]'
             if i != len(route) - 1:
-                result += f' --{cost_matrix[route[i]][route[i+1]]}-->'  # Chi phí giữa các khách hàng
-        result += f'--{cost_matrix[route[-1]][0]}--> [0]'  # Trở về điểm gốc 0
+                result += f' --{cost_matrix[route[i]][route[i+1]]}-->'
+        result += f'--{cost_matrix[route[-1]][0]}--> [0]'
         print(result + f" || total load: {load} ")
 
 
@@ -73,6 +73,7 @@ def print_routes2(routes, cost_matrix):
 def print_routes3(routes):
     for route in routes:
         print([customer.index for customer in route.customers])
+
 
 if __name__ == "__main__":
 
@@ -105,7 +106,7 @@ if __name__ == "__main__":
         print("____" * 20)
 
         for alpha in alpha_param:
-            print(f'param {alpha}')
+            print(f'Param {alpha}')
             best_solution = build_routes(nr, seed_route, cost_matrix, my_customers, alpha[0], alpha[1])
 
             if best_solution:
@@ -117,7 +118,7 @@ if __name__ == "__main__":
                 best_cost = 0
                 for route in best_solution:
                     best_cost += route.time
-                print(best_cost)
+                print("TOTAL COST:", best_cost)
                 print("____" * 20)
 
 

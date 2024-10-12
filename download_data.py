@@ -3,7 +3,6 @@ import gdown
 import os
 
 
-
 if __name__ == "__main__":
     # do không thể nào lấy được tên folder nên phải nhập thủ công
 

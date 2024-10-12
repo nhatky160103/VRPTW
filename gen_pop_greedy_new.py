@@ -20,7 +20,7 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
     # each route
     for vehicle in range(m):
 
-        print(f'>>>>> Unrouted customers for route {vehicle}: {unrouted_customers}')
+        # print(f'>>>>> Unrouted customers for route {vehicle}: {unrouted_customers}')
 
         # if no more customers left today
         if not unrouted_customers:
@@ -47,7 +47,7 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
                         best_cost = cost
                         nearest_customer = j
 
-            print(f'Nearest: {nearest_customer}')
+            # print(f'Nearest: {nearest_customer}')
             
             if nearest_customer == -1 or nearest_customer not in unrouted_customers:
                 current_time += timecost_matrix[last_customer_index + 1][0]
@@ -58,7 +58,7 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
                     else:
                         current_time = current_time - timecost_matrix[route.customers[-1] + 1][0] - customers[route.customers[-1]].service_time - delays[-1] - timecost_matrix[route.customers[-1] + 1][0]
                     
-                    print(f"Remove customer {route.customers[-1]}")
+                    # print(f"Remove customer {route.customers[-1]}")
                     unrouted_customers.add(route.customers[-1])
                     route.customers.pop()
                     delays.pop()
@@ -70,8 +70,8 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
                 
                 if route.customers != []:
                     COST += current_time
-                    print(f'End route!')
-                    print()
+                    # print(f'End route!')
+                    # print()
                     break
                 else:
                     print('No more available customers!')
@@ -90,9 +90,9 @@ def nearest_neighbor(customers, m, Q, D, e0, l0, timecost_matrix):
             last_customer_index = nearest_customer
             
             unrouted_customers.remove(nearest_customer)
-            print(f"Unrouted customers: {unrouted_customers}")
-            print(f"Route: {route.customers}")
-            print()
+            # print(f"Unrouted customers: {unrouted_customers}")
+            # print(f"Route: {route.customers}")
+            # print()
 
         if route.customers != []:
             routes.append(route.customers)
@@ -108,7 +108,7 @@ def is_feasible(route, customer_index, current_time, customers, Q, D, e0, l0, ti
     current_demand = route.current_capacity + customer.demand
 
     if current_demand > Q:
-        print(f"Try {customer_index}: Demand exceeded!")
+        # print(f"Try {customer_index}: Demand exceeded!")
         return False
 
     if not route.customers:
@@ -117,15 +117,15 @@ def is_feasible(route, customer_index, current_time, customers, Q, D, e0, l0, ti
         arrival_time = max(customer.time_window[0], current_time + timecost_matrix[route.customers[-1] + 1][customer_index + 1])
     
     if arrival_time > customer.time_window[1]: # li
-        print(f"Try {customer_index}: Time > li!")
+        # print(f"Try {customer_index}: Time > li!")
         return False
     
     if arrival_time + customer.service_time > l0:
-        print(f"Try {customer_index}: Time > l0!")
+        # print(f"Try {customer_index}: Time > l0!")
         return False
     
     if arrival_time + customer.service_time > (D + e0):
-        print(f"Try {customer_index}: Duration exceeded!")
+        # print(f"Try {customer_index}: Duration exceeded!")
         return False
     
     return True
