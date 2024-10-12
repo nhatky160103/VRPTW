@@ -51,21 +51,24 @@ def print_routes(routes, cost_matrix, customers):
             if i != len(route) - 1:
                 result += f' --{cost_matrix[route[i]][route[i+1]]}-->'  # Chi phí giữa các khách hàng
         result += f'--{cost_matrix[route[-1]][0]}--> [0]'  # Trở về điểm gốc 0
-        print(result + f" total load: {load}")
+        print(result + f" || total load: {load} ")
 
 
 def print_routes2(routes, cost_matrix):
     for route in routes:
         load = 0
-        result = f'[0] --{cost_matrix[0][route.customers[0].index]}--> '
+        result = f'[0] --{cost_matrix[0][route.customers[1].index]}--> '
         for i, customer in enumerate(route.customers):
+            if i == 0:
+                continue
             load += customer.q
-            result += f'({customer.e, customer.l})'
+            result += f'{customer.e, customer.l}'
             result += f'[{customer.index}]'
             if i != len(route.customers) - 1:
                 result += f' --{cost_matrix[route.customers[i].index][route.customers[i+1].index]}-->'  # Chi phí giữa các khách hàng
         result += f'--{cost_matrix[route.customers[-1].index][0]}--> [0]'  # Trở về điểm gốc 0
-        print(result + f" total load: {load}")
+        print(result + f"   |___total load:{load}___|___Total time:{route.time}___|")
+
 
 def print_routes3(routes):
     for route in routes:
