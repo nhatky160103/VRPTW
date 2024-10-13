@@ -40,7 +40,7 @@ if __name__ =="__main__":
     m, Q, D, e0, l0, cost_matrix, customers = get_data(test_case)
     print(cost_matrix[16][0])
 
-    # for customer in customers:
-    #     print(customer.demand, customer.service_time, customer.time_window)
-    # print(m, Q, D, e0, l0)
+    for customer in customers:
+        print(customer.demand, customer.service_time, customer.time_window)
+    print(m, Q, D, e0, l0)
 

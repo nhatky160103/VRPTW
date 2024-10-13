@@ -4,7 +4,7 @@ from build_route import Customer, Route, build_routes, distance_between
 INF = 10000
 
 
-def create_data_model(customers, routes):
+def create_data_model(customers, routes, Q, D, e0, l0, cost_matrix):
     # đây chính là danh sách các khách hàng và route được lấy từ thuật toán sequence
     """
     :param routes: đây chính là list các route mà mỗi route là một list các khách hàng
@@ -22,14 +22,14 @@ def create_data_model(customers, routes):
         temp_customer = Customer(i+1, customer.demand, customer.service_time, customer.time_window[0], customer.time_window[1])
         my_customers.append(temp_customer)
 
-    seed_route= []
+    seed_route = []
     for i, route in enumerate(routes):
-        temp_route = Route(i, depot, Q, D) # khởi tạo một route chỉ gồm depot
-        optim_cost= -INF
+        temp_route = Route(i, depot, Q, D)  # khởi tạo một route chỉ gồm depot
+        optim_cost = -INF
         optim_customer = None
 
         # thực hiện tìm khách hàng xa depot nhất
-        for index_customer in route: # xét tất cả những khách hàng
+        for index_customer in route:  # xét tất cả những khách hàng
             cost = distance_between(my_customers[index_customer], depot, cost_matrix)
             if cost > optim_cost:
                 optim_cost = cost
@@ -55,6 +55,8 @@ def print_routes(routes, cost_matrix, customers):
 
 
 def print_routes2(routes, cost_matrix):
+    print(f'Num route :{len(routes)}\n')
+
     for route in routes:
         load = 0
         result = f'[0] --{cost_matrix[0][route.customers[1].index]}--> '
@@ -69,6 +71,17 @@ def print_routes2(routes, cost_matrix):
         result += f'--{cost_matrix[route.customers[-1].index][0]}--> [0]'  # Trở về điểm gốc 0
         print(result + f"   |___total load:{load}___|___Total time:{route.time}___|")
 
+    print('FINISH')
+
+    load = 0
+    for route in routes:
+        load += route.load
+
+    cost = 0
+    for route in routes:
+        cost += route.time
+    print("TOTAL COST:", cost)
+    print("TOTAL LOAD:", load)
 
 def print_routes3(routes):
     for route in routes:
@@ -76,7 +89,6 @@ def print_routes3(routes):
 
 
 if __name__ == "__main__":
-
     test_case = input('Input the test case: ... ')  # input the name of folder in the input dir
     m, Q, D, e0, l0,  cost_matrix, customers = get_data(test_case)
     final_routes = []
@@ -98,27 +110,22 @@ if __name__ == "__main__":
 
     if len(final_routes) != 0:
         alpha_param = [(1, 0), (0.5, 0.5), (0.75, 0.25)]
-        seed_route, my_customers = create_data_model(customers, final_routes)
-        nr = len(seed_route)
-        print("____" * 20)
-        print('seed_route of build_route')
-        print_routes3(seed_route)
-        print("____" * 20)
 
         for alpha in alpha_param:
             print(f'Param {alpha}')
+            seed_route, my_customers = create_data_model(customers, final_routes, Q, D, e0, l0, cost_matrix)
+            nr = len(seed_route)
+            print('seed:')
+            print_routes3(seed_route)
+            print("____" * 20)
+            print('customers: ')
+            print('|'.join(f"{cus.index}: {cus.is_routed}" for cus in my_customers))
             best_solution = build_routes(nr, seed_route, cost_matrix, my_customers, alpha[0], alpha[1])
 
             if best_solution:
                 print("____"*20)
                 print(f"final solution of build_route of {alpha}:\n")
-
                 print_routes2(best_solution, cost_matrix)
-                print('FINISH')
-                best_cost = 0
-                for route in best_solution:
-                    best_cost += route.time
-                print("TOTAL COST:", best_cost)
                 print("____" * 20)
 
 
