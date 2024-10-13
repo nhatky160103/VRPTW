@@ -1,5 +1,6 @@
 import numpy as np
-INF = 10000
+import copy
+INF = 100000
 
 
 class Customer:
@@ -46,25 +47,34 @@ def calc_b(prev_customer, customer, cost_matrix):# tính thời gian hoàn thàn
 
 def calc_c1(prev_customer, new_customer, next_customer, cost_matrix, a1,  a2):
 
-    detour = (distance_between(prev_customer, new_customer, cost_matrix) # detour phản ánh mức độ lệch tổng chi phí trước và sau khi thêm khách hàng u
+    detour = (distance_between(prev_customer, new_customer, cost_matrix)  # detour phản ánh mức độ lệch tổng chi phí trước và sau khi thêm khách hàng u
     + distance_between(new_customer, next_customer, cost_matrix) - distance_between(prev_customer, next_customer, cost_matrix))
 
-    bj = calc_b(prev_customer, next_customer, cost_matrix)# thời gian hoàn thành phục vụ của next_customer trước khi thêm u
+    bj = calc_b(prev_customer, next_customer, cost_matrix)  # thời gian hoàn thành phục vụ của next_customer trước khi thêm u
 
-    bu = calc_b(prev_customer, new_customer, cost_matrix) # thời gian hoàn thành phục vụ của new_customer
+    bu = calc_b(prev_customer, new_customer, cost_matrix)  # thời gian hoàn thành phục vụ của new_customer
 
-    buj = max(next_customer.e, bu + distance_between(new_customer, next_customer, cost_matrix)) + next_customer.s # thời gian hoàn thành của next_customer sau khi đã thêm u vào
+    buj = max(next_customer.e, bu + distance_between(new_customer, next_customer, cost_matrix)) + next_customer.s  # thời gian hoàn thành của next_customer sau khi đã thêm u vào
 
-    delay = buj - bj # thể hiện độ trễ khi thêm u vào
+    delay = buj - bj  # thể hiện độ trễ khi thêm u vào
 
     return a1 * detour + a2 * delay
 
 
 def insertion_cost(route, new_customer, a1, a2, cost_matrix):
+    """
+
+    :param route: route cần chèn vào
+    :param new_customer: khách hàng mơ cần chèn vào
+    :param a1:
+    :param a2:
+    :param cost_matrix: ma trận chi phí
+    :return: chi phí và vị trí chèn, nếu không tồn tại vị trí chèn khả thi thì trả về cost là INF và vị trí là -1
+    """
     min_cost = INF
     best_position = -1
 
-    for i in range(1, len(route.customers)): # bắt đầu chèn từ vị trí sau vị trí 0 (không thể chèn trước depot được)
+    for i in range(1, len(route.customers)):  # bắt đầu chèn từ vị trí sau vị trí 0 (không thể chèn trước depot được)
         if check_feasible(route, new_customer, i, cost_matrix):
             if i == len(route.customers):  # Chèn ở cuối lộ trình
                 cost = calc_c1(route.customers[-1], new_customer, route.customers[0], cost_matrix, a1,  a2)
@@ -76,16 +86,24 @@ def insertion_cost(route, new_customer, a1, a2, cost_matrix):
                 min_cost = cost
                 best_position = i
 
-    return min_cost, best_position # đây là vị trí điểm j tức là cần chèn khách vào trước điểm này là phương án tốt nhất
-
+    return min_cost, best_position  # đây là vị trí điểm j tức là cần chèn khách vào trước điểm này là phương án tốt nhất
 
 
 def calc_c2(list_index, customer, routes, cost_matrix, a1, a2):
+    '''
+    :param list_index: list position tốt nhất đối với từng route của customer đó (bằng -1 đối với route unfeasible)
+    :param customer:
+    :param routes:
+    :param cost_matrix:
+    :param a1:
+    :param a2:
+    :return: trả về giá trị c2_cost của từng khách hàng
+    '''
 
     total_cost = 0
     optim_cost = INF
 
-    for i, route in enumerate(routes): # duyệt qua từng route thực hiện tính c1 đối với mỗi route
+    for i, route in enumerate(routes):  # duyệt qua từng route thực hiện tính c1 đối với mỗi route
         if list_index[i] != -1:
             prev_customer = route.customers[list_index[i]-1]
             next_customer = route.customers[list_index[i]]
@@ -99,15 +117,12 @@ def calc_c2(list_index, customer, routes, cost_matrix, a1, a2):
     return total_cost - len(routes)*optim_cost  # là tổng cost của các route không tối ưu trừ cost của route tối ưu
 
 
-
-import copy
-
 def check_feasible(route, new_customer, position, cost_matrix):
 
     temp_route = copy.deepcopy(route)
     temp_route.insert_customer(new_customer, position, cost_matrix)
 
-    if route.load + new_customer.q > route.max_load or temp_route.time > route.max_time :
+    if route.load + new_customer.q > route.max_load or temp_route.time > route.max_time:
         return False
 
     for i in range(position, len(temp_route.customers)):
@@ -120,8 +135,7 @@ def check_feasible(route, new_customer, position, cost_matrix):
     return True
 
 
-
-def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
+def build_routes(nr, routes, cost_matrix, all_customer, a1, a2):
 
     """
     args:
@@ -141,8 +155,8 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
         # tính ma trận index tốt nhất
         index_matrix = {}  # một map mới key là khách hàng và giá trị là list các index mỗi index là vị trí tốt nhất đối với từng route
 
-        for customer in remaining_customer:# duyệt qua từng khách hàng
-          for route in routes: # thực hiện tính vị trí chèn đối với từng route
+        for customer in remaining_customer:  # duyệt qua từng khách hàng
+          for route in routes:  # thực hiện tính vị trí chèn đối với từng route
             cost, index = insertion_cost(route, customer, a1, a2, cost_matrix)
             if customer not in index_matrix:
               index_matrix[customer] = []
@@ -154,9 +168,15 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
 
         for customer in remaining_customer:
           c2_cost = calc_c2(index_matrix[customer], customer, routes, cost_matrix, a1, a2)
+          print(f'c2_cost: of {customer.index}', c2_cost)
           if c2_cost > optimal_c2:
             optimal_c2 = c2_cost
             optimal_customer = customer
+
+        print('optim customer:', optimal_customer.index)
+        print('in ra vị trí chèn tốt nhất dối với optim customer: :')
+
+        print([index for index in index_matrix[optimal_customer]])
 
         # thực hiện tìm ra route tốt nhất đối với u*
         optim_cost = INF
@@ -164,24 +184,31 @@ def build_routes( nr, routes, cost_matrix, all_customer, a1, a2):
         optim_position = None
         optim_route_index = -1
 
-
         for i, route in enumerate(routes):
+
           cost , index = insertion_cost(route, optimal_customer, a1, a2, cost_matrix)
+
           if cost < optim_cost:
+
             optim_cost = cost
             optim_position = index
             optim_route_index = i
+        print("optim route", optim_route_index)
+        print('optim position', optim_position)
+        print('___'*20)
+        if optim_position == None or optim_route_index == None or optim_route_index == -1:
 
-        if optim_position == None or optim_route_index ==None or optim_route_index == -1:
-            print('NIL')
+            print('optim_position == None or optim_route_index == None NIL')
             return None
+
         elif check_feasible(routes[optim_route_index], optimal_customer, optim_position, cost_matrix) :
           optimal_customer.is_routed = True
           routes[optim_route_index].insert_customer(optimal_customer, optim_position, cost_matrix )
           remaining_customer.remove(optimal_customer)
 
         else:
-          print('NIL')
+
+          print(' None feasible NIL')
           return None
 
     return routes
