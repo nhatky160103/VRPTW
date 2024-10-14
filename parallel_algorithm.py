@@ -49,8 +49,6 @@ def parallel_algorithm(seed_route, cost_matrix, my_customers):
         temp_seed = copy.deepcopy(seed_route)
         temp_my_customers = copy.deepcopy(my_customers)
         for i in range(nr, 1, -1):
-            print('r: ', i)
-            print_routes3(temp_seed)
             seed_route_copy = copy.deepcopy(temp_seed)
             my_customers_copy = copy.deepcopy(temp_my_customers)
             solution = build_routes(i, seed_route_copy, cost_matrix, my_customers_copy, alpha[0], alpha[1])
@@ -60,14 +58,13 @@ def parallel_algorithm(seed_route, cost_matrix, my_customers):
             else:
 
                 s_star = find_s_star(temp_seed, cost_matrix)
-                for customer in temp_my_customers:  # gán lại giá trị is_routes cho các khách hàng bị loại ra khỏi seed_route
+                for customer in temp_my_customers: # gán lại giá trị is_routes cho các khách hàng bị loại ra khỏi seed_route
                     if customer.index == s_star.customers[-1].index:
                         customer.is_routed = False
 
                 temp_seed = [route for route in temp_seed if route.index != s_star.index]
 
                 cost = cal_cost(solution)
-                print('cost: ', cost)
                 if cost < best_cost:
                     best_cost = cost
                     nr_min = i
@@ -75,6 +72,7 @@ def parallel_algorithm(seed_route, cost_matrix, my_customers):
                     best_param = alpha
 
     return best_solution, nr_min, best_cost, best_param
+
 
 if __name__ == '__main__':
 
@@ -98,30 +96,15 @@ if __name__ == '__main__':
         print("____" * 20)
 
     if len(final_routes) != 0:
-        alpha_param = [(1, 0), (0.5, 0.5), (0.75, 0.25)]
-
         seed_route, my_customers = create_data_model(customers, final_routes, Q, D, e0, l0, cost_matrix)
         nr = len(seed_route)
-        print("____" * 20)
 
+        best_solution, nr_min, best_cost, best_param = parallel_algorithm(seed_route, cost_matrix, my_customers)
 
-        for alpha in alpha_param:
-            seed_route, my_customers = create_data_model(customers, final_routes, Q, D, e0, l0, cost_matrix)
-            nr = len(seed_route)
-            print(f'Param {alpha}')
-            print('seed:')
-            print_routes3(seed_route)
-            print("____" * 20)
-            print('customers: ')
-            print('|'.join(f"{cus.index}: {cus.is_routed}" for cus in my_customers))
-
-            best_solution = build_routes(nr, seed_route, cost_matrix, my_customers, alpha[0], alpha[1])
-
-
-            if best_solution:
-                print("____" * 20)
-                print(f"final solution of build_route of {alpha}:\n")
-                print_routes2(best_solution, cost_matrix)
-                print("____" * 20)
+        print('Final solution of parallel algorithm:')
+        print(f'Num route:{nr_min}')
+        print(f'Best cost: {best_cost}')
+        print(f'Best param:{best_param}')
+        print_routes2(best_solution, cost_matrix)
 
 

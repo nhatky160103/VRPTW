@@ -74,7 +74,7 @@ def insertion_cost(route, new_customer, a1, a2, cost_matrix):
     min_cost = INF
     best_position = -1
 
-    for i in range(1, len(route.customers)):  # bắt đầu chèn từ vị trí sau vị trí 0 (không thể chèn trước depot được)
+    for i in range(1, len(route.customers)+1):  # bắt đầu chèn từ vị trí sau vị trí 0 (không thể chèn trước depot được)
         if check_feasible(route, new_customer, i, cost_matrix):
             if i == len(route.customers):  # Chèn ở cuối lộ trình
                 cost = calc_c1(route.customers[-1], new_customer, route.customers[0], cost_matrix, a1,  a2)
@@ -92,11 +92,6 @@ def insertion_cost(route, new_customer, a1, a2, cost_matrix):
 def calc_c2(list_index, customer, routes, cost_matrix, a1, a2):
     '''
     :param list_index: list position tốt nhất đối với từng route của customer đó (bằng -1 đối với route unfeasible)
-    :param customer:
-    :param routes:
-    :param cost_matrix:
-    :param a1:
-    :param a2:
     :return: trả về giá trị c2_cost của từng khách hàng
     '''
 
@@ -105,8 +100,12 @@ def calc_c2(list_index, customer, routes, cost_matrix, a1, a2):
 
     for i, route in enumerate(routes):  # duyệt qua từng route thực hiện tính c1 đối với mỗi route
         if list_index[i] != -1:
-            prev_customer = route.customers[list_index[i]-1]
-            next_customer = route.customers[list_index[i]]
+            if list_index[i] == len(route.customers):
+                prev_customer = route.customers[list_index[i] - 1]
+                next_customer = route.customers[0]
+            else:
+                prev_customer = route.customers[list_index[i]-1]
+                next_customer = route.customers[list_index[i]]
             cost = calc_c1(prev_customer,  customer, next_customer, cost_matrix, a1, a2)
         else:
             cost = INF
@@ -153,7 +152,7 @@ def build_routes(nr, routes, cost_matrix, all_customer, a1, a2):
     while remaining_customer:
 
         # tính ma trận index tốt nhất
-        index_matrix = {}  # một map mới key là khách hàng và giá trị là list các index mỗi index là vị trí tốt nhất đối với từng route
+        index_matrix = {}   # một map mới key là khách hàng và giá trị là list các index mỗi index là vị trí tốt nhất đối với từng route
 
         for customer in remaining_customer:  # duyệt qua từng khách hàng
           for route in routes:  # thực hiện tính vị trí chèn đối với từng route
@@ -168,15 +167,11 @@ def build_routes(nr, routes, cost_matrix, all_customer, a1, a2):
 
         for customer in remaining_customer:
           c2_cost = calc_c2(index_matrix[customer], customer, routes, cost_matrix, a1, a2)
-          print(f'c2_cost: of {customer.index}', c2_cost)
           if c2_cost > optimal_c2:
             optimal_c2 = c2_cost
             optimal_customer = customer
 
-        print('optim customer:', optimal_customer.index)
-        print('in ra vị trí chèn tốt nhất dối với optim customer: :')
-
-        print([index for index in index_matrix[optimal_customer]])
+        # print('optim customer:', optimal_customer.index)
 
         # thực hiện tìm ra route tốt nhất đối với u*
         optim_cost = INF
@@ -193,12 +188,9 @@ def build_routes(nr, routes, cost_matrix, all_customer, a1, a2):
             optim_cost = cost
             optim_position = index
             optim_route_index = i
-        print("optim route", optim_route_index)
-        print('optim position', optim_position)
-        print('___'*20)
-        if optim_position == None or optim_route_index == None or optim_route_index == -1:
 
-            print('optim_position == None or optim_route_index == None NIL')
+        if optim_position == None or optim_route_index == None or optim_route_index == -1:
+            print('NIL')
             return None
 
         elif check_feasible(routes[optim_route_index], optimal_customer, optim_position, cost_matrix) :
@@ -207,8 +199,7 @@ def build_routes(nr, routes, cost_matrix, all_customer, a1, a2):
           remaining_customer.remove(optimal_customer)
 
         else:
-
-          print(' None feasible NIL')
+          print('NIL')
           return None
 
     return routes

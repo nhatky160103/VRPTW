@@ -39,8 +39,8 @@ def create_data_model(customers, routes, Q, D, e0, l0, cost_matrix):
 
     return seed_route, my_customers
 
-
 def print_routes(routes, cost_matrix, customers):
+    total_load= 0
     for route in routes:
         load = 0
         result = f'[0] --{cost_matrix[0][route[0]]}--> '
@@ -51,7 +51,9 @@ def print_routes(routes, cost_matrix, customers):
             if i != len(route) - 1:
                 result += f' --{cost_matrix[route[i]][route[i+1]]}-->'
         result += f'--{cost_matrix[route[-1]][0]}--> [0]'
-        print(result + f" || total load: {load} ")
+        print(result + f" ||___total load:{load}___||")
+        total_load += load
+    print(f'TOTAL LOAD : {total_load}')
 
 
 def print_routes2(routes, cost_matrix):
@@ -105,7 +107,7 @@ if __name__ == "__main__":
         print("____"*20)
         print("final_route greedy algorithm:\n")
         print_routes(final_routes, cost_matrix, customers)
-        print(cost)
+        print(f'TOTAL COST: {cost}')
         print("____"*20)
 
     if len(final_routes) != 0:
@@ -115,11 +117,6 @@ if __name__ == "__main__":
             print(f'Param {alpha}')
             seed_route, my_customers = create_data_model(customers, final_routes, Q, D, e0, l0, cost_matrix)
             nr = len(seed_route)
-            print('seed:')
-            print_routes3(seed_route)
-            print("____" * 20)
-            print('customers: ')
-            print('|'.join(f"{cus.index}: {cus.is_routed}" for cus in my_customers))
             best_solution = build_routes(nr, seed_route, cost_matrix, my_customers, alpha[0], alpha[1])
 
             if best_solution:
