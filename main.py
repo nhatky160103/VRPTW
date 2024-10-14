@@ -25,16 +25,7 @@ def create_data_model(customers, routes, Q, D, e0, l0, cost_matrix):
     seed_route = []
     for i, route in enumerate(routes):
         temp_route = Route(i, depot, Q, D)  # khởi tạo một route chỉ gồm depot
-        optim_cost = -INF
-        optim_customer = None
-
-        # thực hiện tìm khách hàng xa depot nhất
-        for index_customer in route:  # xét tất cả những khách hàng
-            cost = distance_between(my_customers[index_customer], depot, cost_matrix)
-            if cost > optim_cost:
-                optim_cost = cost
-                optim_customer = my_customers[index_customer]
-        temp_route.insert_customer(optim_customer, 1, cost_matrix)  # thêm khách hàng xa nhất vào route đó
+        temp_route.insert_customer( my_customers[route[-1]], 1, cost_matrix)  # thêm khách hàng xa nhất vào route đó
         seed_route.append(temp_route)  # thêm route vào seed_route
 
     return seed_route, my_customers
