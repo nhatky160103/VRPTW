@@ -15,6 +15,8 @@ def create_report(num_test):
     solomon_cost = []
     parallel_solution = []
     parallel_cost = []
+    solomon_nr = []
+    parallel_nr= []
 
     for test_name in test_names:
 
@@ -43,12 +45,16 @@ def create_report(num_test):
             parallel_cost.append(best_cost)
             parallel_solution.append(solution)
             name_list.append(test_name)
+            solomon_nr.append(len(final_routes))
+            parallel_nr.append(len(solution))
 
     data = {
         'Test Name': name_list,  # Cột 1: Tên test
         'Solomon Solution': solomon_solution,  # Cột 2
+        'Solomon num_route': solomon_nr,
         'Solomon Cost': solomon_cost,  # Cột 3: Kết quả cost
         'Parallel Solution': parallel_solution,  # Cột 4
+        'Parallel num_route': parallel_nr,
         'Parallel Cost': parallel_cost  # Cột 5: Kết quả parallel
 
     }
